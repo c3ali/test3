@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page d'Accueil | Mon Site Web</title>
+    <meta name="description" content="Bienvenue sur la page d'accueil de Mon Site Web.">
+    <meta name="author" content="Développeur">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ======================= En-tête du Site ======================= -->
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">MonLogo</a>
+            <nav>
+                <ul>
+                    <li><a href="#accueil">Accueil</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#a-propos">À Propos</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ======================= Contenu Principal du Site ======================= -->
+    <main>
+
+        <!-- Section Héros -->
+        <section id="accueil" class="hero">
+            <div class="container">
+                <h1>Bienvenue sur Notre Site Web Innovant</h1>
+                <p>La solution à vos besoins, conçue avec passion et expertise.</p>
+                <a href="#contact" class="cta-button">Contactez-nous</a>
+            </div>
+        </section>
+
+        <!-- Section Services -->
+        <section id="services">
+            <div class="container">
+                <h2>Nos Services</h2>
+                <div class="services-grid">
+                    <article class="service-card">
+                        <h3>Développement Web</h3>
+                        <p>Création de sites web modernes, rapides et optimisés.</p>
+                    </article>
+                    <article class="service-card">
+                        <h3>Design UI/UX</h3>
+                        <p>Conception d'interfaces intuitives et d'expériences mémorables.</p>
+                    </article>
+                    <article class="service-card">
+                        <h3>Marketing Digital</h3>
+                        <p>Stratégies pour accroître votre visibilité en ligne.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section À Propos -->
+        <section id="a-propos">
+            <div class="container">
+                <h2>À Propos de Nous</h2>
+                <p>
+                    Fondée en 2024, notre entreprise se consacre à fournir des solutions numériques de haute qualité.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section Contact -->
+        <section id="contact">
+            <div class="container">
+                <h2>Nous Contacter</h2>
+                <p>Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
+                <form action="#" method="post">
+                    <div class="form-group">
+                        <label for="name">Nom :</label>
+                        <input type="text" id="name" name="user_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email :</label>
+                        <input type="email" id="email" name="user_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message :</label>
+                        <textarea id="message" name="user_message" rows="5" required></textarea>
+                    </div>
+                    <button type="submit">Envoyer</button>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ======================= Pied de Page du Site ======================= -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Mon Site Web. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="js/script.js" defer></script>
+
+</body>
+</html>

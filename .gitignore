@@ -1,0 +1,56 @@
+# Environnement Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Environnement local
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Tests
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Bases de données
+*.db
+*.sqlite
+*.sqlite3
+sql_app.db
+
+# Fichiers temporaires
+*.tmp
+*.bak
