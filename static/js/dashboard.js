@@ -57,6 +57,7 @@ const elements = {
 // ============================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     setupEventListeners();
     loadBoards();
 });
@@ -70,6 +71,12 @@ function setupEventListeners() {
             showSection(section);
         });
     });
+
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
 
     // Tableaux
     elements.btnNewBoard.addEventListener('click', showBoardForm);
@@ -95,6 +102,34 @@ function setupEventListeners() {
     document.querySelectorAll('.back-btn').forEach(btn => {
         btn.addEventListener('click', () => showSection('boards'));
     });
+}
+
+// ============================================================================
+// THEME (DARK MODE)
+// ============================================================================
+
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    updateThemeIcon(savedTheme);
+}
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    updateThemeIcon(newTheme);
+
+    showToast(`Mode ${newTheme === 'dark' ? 'sombre' : 'clair'} activé`, 'info');
+}
+
+function updateThemeIcon(theme) {
+    const icon = document.querySelector('.theme-icon');
+    if (icon) {
+        icon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
 }
 
 // ============================================================================
@@ -387,11 +422,20 @@ function closeCardModal() {
 function showToast(message, type = 'info') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    toast.textContent = message;
+
+    const icon = document.createElement('div');
+    icon.className = 'toast-icon';
+
+    const messageEl = document.createElement('div');
+    messageEl.className = 'toast-message';
+    messageEl.textContent = message;
+
+    toast.appendChild(icon);
+    toast.appendChild(messageEl);
     elements.toastContainer.appendChild(toast);
 
     setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease-in';
+        toast.style.animation = 'toastSlideOut 0.3s ease-in';
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
@@ -416,15 +460,3 @@ function confirmDelete(callback) {
         callback();
     }
 }
-
-// Animation slideOut
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideOut {
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);

@@ -16,6 +16,9 @@
             <div class="navbar-menu">
                 <a href="#" class="nav-link active" data-section="boards">Tableaux</a>
                 <a href="#" class="nav-link" data-section="api-docs">Documentation API</a>
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode" title="Changer le thème">
+                    <span class="theme-icon">🌙</span>
+                </button>
             </div>
         </div>
     </nav>
@@ -146,7 +149,7 @@ DELETE /api/v1/cards/{id}           - Supprimer une carte
     </div>
 
     <!-- Messages Toast -->
-    <div id="toast-container" class="toast-container"></div>
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true"></div>
 
     <script src="js/api.js"></script>
     <script src="js/dashboard.js"></script>
