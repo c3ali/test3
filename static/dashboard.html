@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - Gestion de Projets</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <h1>📊 Gestion de Projets</h1>
+            </div>
+            <div class="navbar-menu">
+                <a href="#" class="nav-link active" data-section="boards">Tableaux</a>
+                <a href="#" class="nav-link" data-section="api-docs">Documentation API</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu Principal -->
+    <main class="container">
+        <!-- Section Tableaux -->
+        <section id="boards-section" class="section active">
+            <div class="section-header">
+                <h2>Mes Tableaux</h2>
+                <button id="btn-new-board" class="btn btn-primary">+ Nouveau Tableau</button>
+            </div>
+
+            <!-- Formulaire Création Tableau -->
+            <div id="board-form" class="form-container hidden">
+                <h3>Créer un Nouveau Tableau</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="board-name">Nom du Tableau</label>
+                        <input type="text" id="board-name" placeholder="Ex: Projet Q4" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="board-description">Description</label>
+                        <textarea id="board-description" placeholder="Description du tableau" rows="3"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Créer</button>
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-board">Annuler</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Grille des Tableaux -->
+            <div id="boards-grid" class="boards-grid">
+                <div class="loading">Chargement des tableaux...</div>
+            </div>
+        </section>
+
+        <!-- Section Détails Tableau -->
+        <section id="board-detail-section" class="section hidden">
+            <div class="section-header">
+                <button class="btn btn-secondary back-btn">← Retour</button>
+                <h2 id="board-title">Titre du Tableau</h2>
+                <button id="btn-delete-board" class="btn btn-danger">Supprimer Tableau</button>
+            </div>
+
+            <div class="board-description" id="board-desc-display"></div>
+
+            <!-- Listes du Tableau -->
+            <div class="lists-container">
+                <div id="lists-grid" class="lists-grid">
+                    <div class="loading">Chargement des listes...</div>
+                </div>
+                <button id="btn-new-list" class="btn btn-primary add-list-btn">+ Ajouter Liste</button>
+            </div>
+
+            <!-- Formulaire Création Liste -->
+            <div id="list-form" class="form-container hidden">
+                <h3>Créer une Nouvelle Liste</h3>
+                <form>
+                    <div class="form-group">
+                        <label for="list-name">Nom de la Liste</label>
+                        <input type="text" id="list-name" placeholder="Ex: À Faire" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="list-description">Description</label>
+                        <textarea id="list-description" placeholder="Description de la liste" rows="2"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">Créer</button>
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-list">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Section Documentation API -->
+        <section id="api-docs-section" class="section">
+            <h2>Documentation API</h2>
+            <div class="api-docs">
+                <div class="doc-block">
+                    <h3>Accès à la Documentation Interactive</h3>
+                    <p>L'API FastAPI fournit une documentation interactive Swagger :</p>
+                    <a href="/docs" target="_blank" class="btn btn-primary">Swagger UI</a>
+                    <a href="/redoc" target="_blank" class="btn btn-secondary">ReDoc</a>
+                </div>
+                <div class="doc-block">
+                    <h3>Endpoints Disponibles</h3>
+                    <pre><code>
+GET    /api/v1/boards/              - Lister les tableaux
+POST   /api/v1/boards/              - Créer un tableau
+GET    /api/v1/boards/{id}          - Obtenir un tableau
+PUT    /api/v1/boards/{id}          - Mettre à jour un tableau
+DELETE /api/v1/boards/{id}          - Supprimer un tableau
+
+GET    /api/v1/lists/               - Lister les listes
+POST   /api/v1/lists/               - Créer une liste
+GET    /api/v1/lists/{id}           - Obtenir une liste
+PUT    /api/v1/lists/{id}           - Mettre à jour une liste
+DELETE /api/v1/lists/{id}           - Supprimer une liste
+
+GET    /api/v1/cards/               - Lister les cartes
+POST   /api/v1/cards/               - Créer une carte
+GET    /api/v1/cards/{id}           - Obtenir une carte
+PUT    /api/v1/cards/{id}           - Mettre à jour une carte
+DELETE /api/v1/cards/{id}           - Supprimer une carte
+                    </code></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Détails Carte -->
+    <div id="card-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="card-title-modal">Titre de la Carte</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="card-description-modal"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="btn-delete-card">Supprimer</button>
+                <button class="btn btn-secondary modal-close">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Toast -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
