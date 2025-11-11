@@ -7,7 +7,8 @@ Ce module utilise Pydantic pour charger et valider la configuration
 
 from typing import List, Union, Optional
 
-from pydantic import AnyHttpUrl, BaseSettings, validator, PostgresDsn, SecretStr
+from pydantic import AnyHttpUrl, field_validator, PostgresDsn, SecretStr
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -38,12 +39,13 @@ class Settings(BaseSettings):
     SQLALCHEMY_DATABASE_URI: Union[PostgresDsn, str] = ""
 
     # Validateur Pydantic pour construire l'URI de la base de données
-    @validator("SQLALCHEMY_DATABASE_URI", pre=True)
-    def assemble_db_connection(cls, v: str, values: dict) -> str:
+    @field_validator("SQLALCHEMY_DATABASE_URI", mode="before")
+    @classmethod
+    def assemble_db_connection(cls, v: str, info) -> str:
         if isinstance(v, str) and v:
             return v
 
-        password = values.get("DATABASE_PASSWORD")
+        password = info.data.get("DATABASE_PASSWORD")
         if isinstance(password, SecretStr):
             password = password.get_secret_value()
 
@@ -55,7 +57,8 @@ class Settings(BaseSettings):
         AnyHttpUrl("http://localhost:8080"),
     ]
 
-    @validator("BACKEND_CORS_ORIGINS", pre=True)
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
+    @classmethod
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
