@@ -46,6 +46,9 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_headers=["*"],
     )
 
+# Monter les fichiers statiques (CSS, JS, Images) - DOIT être fait AVANT les routes
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 # Inclure le routeur principal de l'API
 app.include_router(api_router_v1.api_router, prefix=settings.API_V1_STR)
 
@@ -54,6 +57,12 @@ app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(boards.router, prefix=settings.API_V1_STR)
 app.include_router(lists.router, prefix=settings.API_V1_STR)
 app.include_router(cards.router, prefix=settings.API_V1_STR)
+
+
+@app.get("/health", tags=["Health"])
+def health_check():
+    """Endpoint de vérification de santé de l'application."""
+    return {"status": "healthy"}
 
 
 @app.get("/", tags=["Frontend"])
@@ -75,16 +84,6 @@ def get_dashboard():
     """Retourne le tableau de bord."""
     static_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'dashboard.html')
     return FileResponse(static_path, media_type="text/html")
-
-
-@app.get("/health", tags=["Health"])
-def health_check():
-    """Endpoint de vérification de santé de l'application."""
-    return {"status": "healthy"}
-
-
-# Monter les fichiers statiques (CSS, JS, Images)
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 if __name__ == "__main__":
