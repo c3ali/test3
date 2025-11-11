@@ -24,14 +24,16 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "dev"
 
     # --- Sécurité et JWT ---
-    SECRET_KEY: SecretStr
+    # SECRET_KEY par défaut pour le développement UNIQUEMENT
+    # EN PRODUCTION: Générez une clé sécurisée avec: openssl rand -hex 32
+    SECRET_KEY: SecretStr = SecretStr("09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 8  # 8 jours par défaut
     ALGORITHM: str = "HS256"
 
     # --- Configuration de la base de données ---
     DATABASE_HOST: str = "localhost"
     DATABASE_USER: str = "postgres"
-    DATABASE_PASSWORD: SecretStr = SecretStr("changeme")
+    DATABASE_PASSWORD: SecretStr = SecretStr("postgres")
     DATABASE_NAME: str = "app_db"
     DATABASE_PORT: int = 5432
 

@@ -2,6 +2,7 @@
 Point d'entrée principal de l'application FastAPI.
 """
 
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -10,6 +11,18 @@ from app.core.config import settings
 from app.database import Base, engine
 from app.api.v1 import router as api_router_v1
 from app.api.v1.endpoints import boards, lists, cards, auth
+
+# Configuration du logging
+logger = logging.getLogger(__name__)
+
+# Avertissement en production si les clés par défaut sont utilisées
+if settings.ENVIRONMENT == "production":
+    default_secret = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+    if settings.SECRET_KEY.get_secret_value() == default_secret:
+        logger.warning(
+            "⚠️  SECURITY WARNING: Using default SECRET_KEY in production! "
+            "Generate a new key with: openssl rand -hex 32"
+        )
 
 # Créer les tables de la base de données
 Base.metadata.create_all(bind=engine)
