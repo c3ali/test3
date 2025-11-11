@@ -3,10 +3,12 @@ Point d'entrée principal de l'application FastAPI.
 """
 
 import logging
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from fastapi.exceptions import RequestValidationError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 import os
 
 from app.core.config import settings
@@ -27,7 +29,11 @@ if settings.ENVIRONMENT == "production":
         )
 
 # Créer les tables de la base de données
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+    logger.info("✅ Tables de base de données créées/vérifiées avec succès")
+except Exception as e:
+    logger.error(f"❌ Erreur lors de la création des tables: {e}")
 
 # Créer l'instance de l'application FastAPI
 app = FastAPI(
@@ -35,6 +41,34 @@ app = FastAPI(
     description="Une API pour gérer les tableaux, listes et cartes.",
     version="1.0.0",
 )
+
+# Gestionnaires d'erreurs globaux pour renvoyer du JSON au lieu de HTML
+@app.exception_handler(SQLAlchemyError)
+async def sqlalchemy_exception_handler(request: Request, exc: SQLAlchemyError):
+    """Gère les erreurs SQLAlchemy et renvoie du JSON."""
+    logger.error(f"Database error: {exc}")
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": "Erreur de base de données. Vérifiez le schéma ou les contraintes."}
+    )
+
+@app.exception_handler(IntegrityError)
+async def integrity_exception_handler(request: Request, exc: IntegrityError):
+    """Gère les erreurs d'intégrité (contraintes de BDD) et renvoie du JSON."""
+    logger.error(f"Integrity error: {exc}")
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": "Erreur d'intégrité des données. Vérifiez les contraintes."}
+    )
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Gère toutes les autres exceptions et renvoie du JSON."""
+    logger.error(f"Unhandled error: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={"detail": f"Erreur interne du serveur: {str(exc)}"}
+    )
 
 # Configurer CORS
 if settings.BACKEND_CORS_ORIGINS:
@@ -63,6 +97,33 @@ app.include_router(cards.router, prefix=settings.API_V1_STR)
 def health_check():
     """Endpoint de vérification de santé de l'application."""
     return {"status": "healthy"}
+
+
+@app.post("/recreate-db", tags=["Admin"], include_in_schema=False)
+def recreate_database():
+    """
+    ⚠️ ATTENTION: Recrée toutes les tables (supprime les données existantes).
+    Endpoint temporaire pour migration. À SUPPRIMER en production.
+    """
+    try:
+        # Supprimer toutes les tables
+        Base.metadata.drop_all(bind=engine)
+        logger.info("Tables supprimées")
+
+        # Recréer toutes les tables avec le nouveau schéma
+        Base.metadata.create_all(bind=engine)
+        logger.info("Tables recréées")
+
+        return {
+            "status": "success",
+            "message": "Base de données recréée avec le nouveau schéma (owner_id nullable)"
+        }
+    except Exception as e:
+        logger.error(f"Erreur lors de la recréation: {e}")
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={"detail": f"Erreur: {str(e)}"}
+        )
 
 
 @app.get("/", tags=["Frontend"])
